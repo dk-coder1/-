@@ -2,12 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { soundEngine } from '../utils/audioEngine';
 import {
   Trophy,
-  Sparkles,
   Volume2,
   RotateCcw,
   CheckCircle2,
   XCircle,
-  HelpCircle,
   Lightbulb,
   Award,
   Flame,
@@ -51,7 +49,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'C4',
     octave: 4,
     pitchName: 'C',
-    lineOffset: -2, // 아래 첫째 덧줄
+    lineOffset: -2,
     needsLedgerLineBottom: true,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
@@ -65,7 +63,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'D4',
     octave: 4,
     pitchName: 'D',
-    lineOffset: -1, // 아래 첫째 칸
+    lineOffset: -1,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
     solfege: '레',
@@ -78,7 +76,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'E4',
     octave: 4,
     pitchName: 'E',
-    lineOffset: 0, // 제1줄
+    lineOffset: 0,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
     solfege: '미',
@@ -91,7 +89,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'F4',
     octave: 4,
     pitchName: 'F',
-    lineOffset: 1, // 제1칸
+    lineOffset: 1,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
     solfege: '파',
@@ -104,7 +102,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'G4',
     octave: 4,
     pitchName: 'G',
-    lineOffset: 2, // 제2줄
+    lineOffset: 2,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
     solfege: '솔',
@@ -117,7 +115,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'A4',
     octave: 4,
     pitchName: 'A',
-    lineOffset: 3, // 제2칸
+    lineOffset: 3,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
     solfege: '라',
@@ -130,7 +128,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'B4',
     octave: 4,
     pitchName: 'B',
-    lineOffset: 4, // 제3줄
+    lineOffset: 4,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
     solfege: '시',
@@ -143,7 +141,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'C5',
     octave: 5,
     pitchName: 'C',
-    lineOffset: 5, // 제3칸
+    lineOffset: 5,
     scaleId: 'c-major',
     scaleName: '다장조 (C Major)',
     solfege: '도',
@@ -158,7 +156,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'G4',
     octave: 4,
     pitchName: 'G',
-    lineOffset: 2, // 제2줄
+    lineOffset: 2,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '도',
@@ -171,7 +169,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'A4',
     octave: 4,
     pitchName: 'A',
-    lineOffset: 3, // 제2칸
+    lineOffset: 3,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '레',
@@ -184,7 +182,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'B4',
     octave: 4,
     pitchName: 'B',
-    lineOffset: 4, // 제3줄
+    lineOffset: 4,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '미',
@@ -197,7 +195,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'C5',
     octave: 5,
     pitchName: 'C',
-    lineOffset: 5, // 제3칸
+    lineOffset: 5,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '파',
@@ -210,7 +208,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'D5',
     octave: 5,
     pitchName: 'D',
-    lineOffset: 6, // 제4줄
+    lineOffset: 6,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '솔',
@@ -223,7 +221,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'E5',
     octave: 5,
     pitchName: 'E',
-    lineOffset: 7, // 제4칸
+    lineOffset: 7,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '라',
@@ -236,7 +234,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'F#5',
     octave: 5,
     pitchName: 'F#',
-    lineOffset: 8, // 제5줄
+    lineOffset: 8,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '시',
@@ -249,7 +247,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'G5',
     octave: 5,
     pitchName: 'G',
-    lineOffset: 9, // 위 첫째 칸
+    lineOffset: 9,
     scaleId: 'g-major',
     scaleName: '사장조 (G Major)',
     solfege: '도',
@@ -264,7 +262,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'D4',
     octave: 4,
     pitchName: 'D',
-    lineOffset: -1, // 아래 첫째 칸
+    lineOffset: -1,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '도',
@@ -277,7 +275,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'E4',
     octave: 4,
     pitchName: 'E',
-    lineOffset: 0, // 제1줄
+    lineOffset: 0,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '레',
@@ -290,7 +288,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'F#4',
     octave: 4,
     pitchName: 'F#',
-    lineOffset: 1, // 제1칸
+    lineOffset: 1,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '미',
@@ -303,7 +301,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'G4',
     octave: 4,
     pitchName: 'G',
-    lineOffset: 2, // 제2줄
+    lineOffset: 2,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '파',
@@ -316,7 +314,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'A4',
     octave: 4,
     pitchName: 'A',
-    lineOffset: 3, // 제2칸
+    lineOffset: 3,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '솔',
@@ -329,7 +327,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'B4',
     octave: 4,
     pitchName: 'B',
-    lineOffset: 4, // 제3줄
+    lineOffset: 4,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '라',
@@ -342,7 +340,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'C#5',
     octave: 5,
     pitchName: 'C#',
-    lineOffset: 5, // 제3칸
+    lineOffset: 5,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '시',
@@ -355,7 +353,7 @@ const QUESTIONS_DATABASE: NoteQuestion[] = [
     pitch: 'D5',
     octave: 5,
     pitchName: 'D',
-    lineOffset: 6, // 제4줄
+    lineOffset: 6,
     scaleId: 'd-major',
     scaleName: '라장조 (D Major)',
     solfege: '도',
@@ -373,7 +371,7 @@ export const StaffNoteGame: React.FC = () => {
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
   const [roundCount, setRoundCount] = useState<number>(1);
-  const [totalRounds, setTotalRounds] = useState<number>(10);
+  const totalRounds = 10;
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [lastFeedback, setLastFeedback] = useState<{ isCorrect: boolean; selected: string } | null>(null);
 
@@ -482,7 +480,7 @@ export const StaffNoteGame: React.FC = () => {
           </p>
         </div>
 
-        {/* Score & Streak Stats (도톰한 교실 스티커 스타일) */}
+        {/* Score & Streak Stats */}
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-300 px-3.5 py-1.5 rounded-2xl shadow-2xs">
             <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
@@ -610,13 +608,12 @@ export const StaffNoteGame: React.FC = () => {
             </button>
           </div>
 
-          {/* 3. SVG Musical Staff Canvas (미래엔 교과서 악보 인쇄 스타일 - 깨끗한 백색과 선명한 라인) */}
+          {/* 3. SVG Musical Staff Canvas */}
           <div className="relative bg-white rounded-3xl border-2 border-slate-300 p-6 shadow-sm flex flex-col items-center justify-center min-h-[220px]">
             <svg
               viewBox="0 0 460 170"
               className="w-full max-w-[500px] h-44 select-none"
             >
-              {/* 5 Staff Lines (또렷하고 단정한 교과서 블랙 라인) */}
               {[74, 88, 102, 116, 130].map((y, idx) => (
                 <line
                   key={idx}
@@ -629,11 +626,9 @@ export const StaffNoteGame: React.FC = () => {
                 />
               ))}
 
-              {/* Bar Lines at start and end */}
               <line x1="25" y1="74" x2="25" y2="130" stroke="#1E293B" strokeWidth="3" />
               <line x1="435" y1="74" x2="435" y2="130" stroke="#1E293B" strokeWidth="3" />
 
-              {/* Treble Clef (높은음자리표) */}
               <text
                 x="35"
                 y="126"
@@ -645,7 +640,6 @@ export const StaffNoteGame: React.FC = () => {
                 𝄞
               </text>
 
-              {/* Key Signatures (조표) */}
               {currentQuestion.scaleId === 'g-major' && (
                 <text
                   x="90"
@@ -684,7 +678,6 @@ export const StaffNoteGame: React.FC = () => {
                 </g>
               )}
 
-              {/* Bottom Ledger Line for C4 (lineOffset -2, y=144) */}
               {currentQuestion.needsLedgerLineBottom && (
                 <line
                   x1={noteX - 18}
@@ -696,7 +689,6 @@ export const StaffNoteGame: React.FC = () => {
                 />
               )}
 
-              {/* Top Ledger Line for A5 (lineOffset 10, y=60) */}
               {currentQuestion.needsLedgerLineTop && (
                 <line
                   x1={noteX - 18}
@@ -708,7 +700,6 @@ export const StaffNoteGame: React.FC = () => {
                 />
               )}
 
-              {/* Target Musical Note (선명한 교과서 음표) */}
               <g className="transition-all duration-200">
                 <ellipse
                   cx={noteX}
@@ -721,7 +712,6 @@ export const StaffNoteGame: React.FC = () => {
                   strokeWidth="2"
                 />
 
-                {/* Note Stem (기둥) */}
                 <line
                   x1={currentQuestion.lineOffset >= 4 ? noteX - 9 : noteX + 9}
                   y1={noteY}
@@ -733,13 +723,11 @@ export const StaffNoteGame: React.FC = () => {
                 />
               </g>
 
-              {/* Helper Line Tooltip Guides (교과서 가이드) */}
               <text x="375" y="78" fontSize="11" fontWeight="bold" fill="#64748B" fontFamily="sans-serif">5줄(파)</text>
               <text x="375" y="106" fontSize="11" fontWeight="bold" fill="#64748B" fontFamily="sans-serif">3줄(시)</text>
               <text x="375" y="134" fontSize="11" fontWeight="bold" fill="#64748B" fontFamily="sans-serif">1줄(미)</text>
             </svg>
 
-            {/* In-staff Question Prompt */}
             <div className="text-center mt-3">
               <span className="text-base sm:text-lg font-black text-slate-900 font-jua">
                 위 음표의 {answerMode === 'solfege' ? '계이름(도레미...)' : answerMode === 'korean' ? '우리말 음이름' : '영문 음이름'}은 무엇일까요?
@@ -747,7 +735,7 @@ export const StaffNoteGame: React.FC = () => {
             </div>
           </div>
 
-          {/* 4. Instant Feedback Banner (교과서 정답 확인 박스) */}
+          {/* 4. Instant Feedback Banner */}
           {lastFeedback && (
             <div
               className={`p-4 rounded-2xl border-2 flex items-start gap-3 transition-all ${
@@ -777,7 +765,7 @@ export const StaffNoteGame: React.FC = () => {
             </div>
           )}
 
-          {/* 5. Multiple Choice Answer Buttons (도톰하고 터치하기 시원시원한 버튼) */}
+          {/* 5. Multiple Choice Answer Buttons */}
           <div className="space-y-2.5">
             <span className="text-xs font-black text-slate-700 px-1 font-jua text-sm">
               정답을 콕! 눌러보세요:
@@ -818,7 +806,7 @@ export const StaffNoteGame: React.FC = () => {
           </div>
         </div>
       ) : (
-        /* 6. Game Over / Victory Summary Card (교실 칭찬 상장 스타일) */
+        /* 6. Game Over / Victory Summary Card */
         <div className="bg-gradient-to-br from-amber-50 via-white to-amber-100/70 rounded-3xl border-2 border-amber-300 p-8 text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto shadow-md">
             <Award className="w-9 h-9" />
@@ -858,7 +846,7 @@ export const StaffNoteGame: React.FC = () => {
         </div>
       )}
 
-      {/* 7. Elementary Textbook Staff Reading Cheat Sheet (교과서 요약 정리 코너) */}
+      {/* 7. Elementary Textbook Staff Reading Cheat Sheet */}
       <div className="bg-[#FFF9EE] border-2 border-amber-200 rounded-3xl p-5 text-xs text-slate-700 space-y-2.5">
         <div className="flex items-center gap-1.5 font-black text-amber-950 text-sm font-jua">
           <Lightbulb className="w-4 h-4 text-amber-600" />

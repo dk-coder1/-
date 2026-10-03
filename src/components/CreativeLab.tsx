@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MUSICAL_KEYS, MusicalKey } from '../data/musicTheoryData';
+import { MUSICAL_KEYS } from '../data/musicTheoryData';
 import { soundEngine } from '../utils/audioEngine';
 import { InteractivePiano } from './InteractivePiano';
 import { Sparkles, Play, Pause, Wand2, CircleDot, Award } from 'lucide-react';
@@ -47,7 +47,7 @@ export const CreativeLab: React.FC = () => {
   const [selectedPatternId, setSelectedPatternId] = useState<string>(CHORD_PATTERNS[0].id);
   const [isPlayingBacking, setIsPlayingBacking] = useState<boolean>(false);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
-  const [tempoBpm, setTempoBpm] = useState<number>(80);
+  const [tempoBpm] = useState<number>(80);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordedNotes, setRecordedNotes] = useState<{ pitch: string; solfege: string; time: number }[]>([]);
   const [isPlayingRecorded, setIsPlayingRecorded] = useState<boolean>(false);

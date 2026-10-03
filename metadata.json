@@ -1,7 +1,6 @@
 {
   "name": "도레미 화성 탐험대 - 초등 화성학 & 건반 교실",
   "description": "다장조부터 사장조(네잎클로버), 라단조(별 보며 달 보며)까지 음이름, 계이름, 조표, 손가락 주요 3화음 운지와 소리의 어울림을 직관적으로 배우는 초등 음악 교과서 인터랙티브 앱",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
-

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TextbookSong, TEXTBOOK_SONGS, MUSICAL_KEYS } from '../data/musicTheoryData';
+import { TEXTBOOK_SONGS, MUSICAL_KEYS } from '../data/musicTheoryData';
 import { soundEngine } from '../utils/audioEngine';
 import { InteractivePiano } from './InteractivePiano';
-import { Play, Pause, RotateCcw, Music, Sparkles, Users, Award, BookOpen } from 'lucide-react';
+import { Play, Pause, RotateCcw, Sparkles, Users, Award, BookOpen } from 'lucide-react';
 
 interface SongAccompanimentProps {
   initialSongId?: string;
@@ -19,7 +19,6 @@ export const SongAccompaniment: React.FC<SongAccompanimentProps> = ({
   const [includeChordAccomp, setIncludeChordAccomp] = useState<boolean>(true); // 화음 반주
   const [interactivePlayMode, setInteractivePlayMode] = useState<boolean>(false); // 내가 반주자 모드
   const [userScore, setUserScore] = useState<number>(0);
-  const [lastUserChord, setLastUserChord] = useState<string | null>(null);
   const [activeNotes, setActiveNotes] = useState<string[]>([]);
 
   const song = TEXTBOOK_SONGS.find(s => s.id === selectedSongId) || TEXTBOOK_SONGS[0];
@@ -31,7 +30,6 @@ export const SongAccompaniment: React.FC<SongAccompanimentProps> = ({
     setIsPlaying(false);
     setCurrentMeasureIndex(0);
     setUserScore(0);
-    setLastUserChord(null);
     setActiveNotes([]);
     if (timerRef.current) clearInterval(timerRef.current);
   }, [selectedSongId]);
@@ -106,7 +104,6 @@ export const SongAccompaniment: React.FC<SongAccompanimentProps> = ({
     setIsPlaying(false);
     setCurrentMeasureIndex(0);
     setUserScore(0);
-    setLastUserChord(null);
     setActiveNotes([]);
   };
 
@@ -114,7 +111,6 @@ export const SongAccompaniment: React.FC<SongAccompanimentProps> = ({
     const chordDef = songKey.primaryChords.find(c => c.symbol.toLowerCase() === chordSymbol.toLowerCase());
     if (chordDef) {
       soundEngine.playChord(chordDef.textbookPosition.notes, 1.2, 0.02, 0.35);
-      setLastUserChord(chordSymbol);
 
       const targetChord = song.measures[currentMeasureIndex]?.chords;
       if (targetChord && targetChord.toLowerCase() === chordSymbol.toLowerCase()) {

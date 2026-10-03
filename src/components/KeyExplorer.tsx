@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MusicalKey, ChordVoicing, MUSICAL_KEYS } from '../data/musicTheoryData';
 import { soundEngine } from '../utils/audioEngine';
 import { InteractivePiano } from './InteractivePiano';
-import { Play, Music, Sparkles, BookOpen, Hand, HelpCircle, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Play, Music, Sparkles, BookOpen, Hand, HelpCircle, CheckCircle2 } from 'lucide-react';
 
 interface KeyExplorerProps {
   currentKey: MusicalKey;
@@ -23,7 +23,6 @@ const SOLFEGE_COLORS: Record<string, { bg: string; text: string }> = {
 export const KeyExplorer: React.FC<KeyExplorerProps> = ({
   currentKey,
   onSelectKey,
-  onOpenQnADemo
 }) => {
   const [selectedChord, setSelectedChord] = useState<ChordVoicing>(currentKey.primaryChords[0]);
   const [inversionMode, setInversionMode] = useState<'textbook' | 'root'>('textbook');

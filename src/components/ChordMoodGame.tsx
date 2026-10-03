@@ -1,26 +1,21 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { soundEngine } from '../utils/audioEngine';
 import {
-  Sun,
-  Moon,
   Volume2,
   Sparkles,
   RotateCcw,
   CheckCircle2,
-  XCircle,
   Trophy,
   ArrowRight,
   Flame,
   HelpCircle,
   Music,
   Play,
-  VolumeX,
-  Layers,
   Sparkle
 } from 'lucide-react';
 
 export type ChordQuality = 'major' | 'minor';
-export type GameMode = 'textbook' | 'all' | 'compare-pairs';
+export type GameMode = 'textbook' | 'all';
 
 export interface ChordQuestion {
   id: string;
@@ -237,11 +232,30 @@ export const ChordMoodGame: React.FC = () => {
     return CHORD_QUESTIONS_POOL;
   }, [mode]);
 
+  // Play chord function with mode
+  const playChordSound = useCallback((notes: string[], style: 'block' | 'arpeggio' | 'third-only') => {
+    if (!notes || notes.length < 3) return;
+    setIsPlayingAudio(true);
+
+    if (style === 'block') {
+      soundEngine.playChord(notes, 1.8, 0.03, 0.28);
+      setTimeout(() => setIsPlayingAudio(false), 1900);
+    } else if (style === 'arpeggio') {
+      notes.forEach((note, idx) => {
+        soundEngine.playNote(note, 0.9, idx * 0.45, 0.25);
+      });
+      soundEngine.playChord(notes, 1.5, notes.length * 0.45 + 0.1, 0.22);
+      setTimeout(() => setIsPlayingAudio(false), 2400);
+    } else if (style === 'third-only') {
+      soundEngine.playNote(notes[0], 0.8, 0, 0.26);
+      soundEngine.playNote(notes[1], 1.2, 0.4, 0.28);
+      setTimeout(() => setIsPlayingAudio(false), 1700);
+    }
+  }, []);
+
   // Start a new game session
   const startNewGame = useCallback(() => {
-    // Shuffle pool
     const shuffled = [...activePool].sort(() => Math.random() - 0.5);
-    // pick 8 questions
     const selected = shuffled.slice(0, 8);
     setQuestions(selected);
     setCurrentIndex(0);
@@ -253,68 +267,38 @@ export const ChordMoodGame: React.FC = () => {
     setIsGameOver(false);
     setShowExplanation(false);
 
-    // Play first chord after small delay
     setTimeout(() => {
       if (selected[0]) {
         playChordSound(selected[0].notes, 'block');
       }
     }, 450);
-  }, [activePool]);
+  }, [activePool, playChordSound]);
 
-  // Initialize on mount or mode change
   useEffect(() => {
     startNewGame();
   }, [startNewGame]);
 
   const currentQuestion = questions[currentIndex] || questions[0];
 
-  // Play chord function with mode
-  const playChordSound = (notes: string[], style: 'block' | 'arpeggio' | 'third-only') => {
-    if (!notes || notes.length < 3) return;
-    setIsPlayingAudio(true);
-
-    if (style === 'block') {
-      soundEngine.playChord(notes, 1.8, 0.03, 0.28);
-      setTimeout(() => setIsPlayingAudio(false), 1900);
-    } else if (style === 'arpeggio') {
-      // 쿵 - 짝 - 짝 (차례대로 펼침화음)
-      notes.forEach((note, idx) => {
-        soundEngine.playNote(note, 0.9, idx * 0.45, 0.25);
-      });
-      // finish with chord
-      soundEngine.playChord(notes, 1.5, notes.length * 0.45 + 0.1, 0.22);
-      setTimeout(() => setIsPlayingAudio(false), 2400);
-    } else if (style === 'third-only') {
-      // Root note then 3rd note only to highlight the mood
-      soundEngine.playNote(notes[0], 0.8, 0, 0.26);
-      soundEngine.playNote(notes[1], 1.2, 0.4, 0.28);
-      setTimeout(() => setIsPlayingAudio(false), 1700);
-    }
-  };
-
-  // Sound effect for correct / wrong
-  const playFeedbackSound = (isCorrect: boolean) => {
-    if (isCorrect) {
-      // Joyful chime arpeggio (도-미-솔-도)
+  const playFeedbackSound = (isCorrectFeedback: boolean) => {
+    if (isCorrectFeedback) {
       soundEngine.playNote('C5', 0.25, 0, 0.28);
       soundEngine.playNote('E5', 0.25, 0.12, 0.28);
       soundEngine.playNote('G5', 0.35, 0.24, 0.32);
       soundEngine.playNote('C6', 0.7, 0.38, 0.35);
     } else {
-      // Gentle chord
       soundEngine.playNote('A3', 0.4, 0, 0.22);
       soundEngine.playNote('C4', 0.6, 0.12, 0.2);
     }
   };
 
-  // Handle student guess
   const handleGuess = (quality: ChordQuality) => {
     if (answeredState !== 'idle' || !currentQuestion) return;
 
     setSelectedGuess(quality);
-    const isCorrect = quality === currentQuestion.chordQuality;
+    const isCorrectGuess = quality === currentQuestion.chordQuality;
 
-    if (isCorrect) {
+    if (isCorrectGuess) {
       const nextCombo = combo + 1;
       const points = 10 + nextCombo * 2;
       setScore(prev => prev + points);
@@ -332,7 +316,6 @@ export const ChordMoodGame: React.FC = () => {
     setShowExplanation(true);
   };
 
-  // Move to next question
   const handleNextQuestion = () => {
     if (currentIndex + 1 >= questions.length) {
       setIsGameOver(true);
@@ -345,7 +328,6 @@ export const ChordMoodGame: React.FC = () => {
     setSelectedGuess(null);
     setShowExplanation(false);
 
-    // Play next chord sound automatically
     setTimeout(() => {
       const nextQ = questions[nextIndex];
       if (nextQ) {
@@ -354,7 +336,6 @@ export const ChordMoodGame: React.FC = () => {
     }, 300);
   };
 
-  // Compare Lab Chords
   const comparePairs: Record<'C' | 'A' | 'D' | 'G', {
     name: string;
     majorName: string;
@@ -687,7 +668,7 @@ export const ChordMoodGame: React.FC = () => {
                 </button>
               </div>
 
-              {/* Musical Breakdown: Root, 3rd, 5th visual representation */}
+              {/* Musical Breakdown */}
               <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
                   <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
@@ -739,7 +720,7 @@ export const ChordMoodGame: React.FC = () => {
           </div>
 
           <div>
-            <span className="text-xs font-black bg-amber-100 text-amber-900 px-3 py-1 rounded-full border border-amber-200 font-jua">
+            <span className="text-xs font-black bg-amber-100 text-amber-950 px-3 py-1 rounded-full border border-amber-200 font-jua">
               소리 맞추기 도전 완료!
             </span>
             <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-2 font-jua">
@@ -780,7 +761,7 @@ export const ChordMoodGame: React.FC = () => {
         </div>
       )}
 
-      {/* 4. Interactive Compare Lab (나란히 직접 들어보는 화음 비교 연구소) */}
+      {/* 4. Interactive Compare Lab */}
       <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">

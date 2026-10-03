@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { THEORY_QUESTIONS, TheoryQuestion, MUSICAL_KEYS } from '../data/musicTheoryData';
+import { THEORY_QUESTIONS } from '../data/musicTheoryData';
 import { soundEngine } from '../utils/audioEngine';
 import { StaffNoteGame } from './StaffNoteGame';
 import { TonicQuizGame } from './TonicQuizGame';
@@ -19,25 +19,17 @@ export const TheorySecretLab: React.FC<TheorySecretLabProps> = ({ initialSubTab 
       setActiveSubTab(initialSubTab);
     }
   }, [initialSubTab]);
+
   const [selectedQuestionId, setSelectedQuestionId] = useState<string>(THEORY_QUESTIONS[0].id);
 
   // Demo 1 State (음이름 vs 계이름)
   const [demo1Key, setDemo1Key] = useState<'C' | 'G' | 'F'>('G');
   const [demo1Lens, setDemo1Lens] = useState<'both' | 'name' | 'solfege'>('both');
 
-  // Demo 2 State (온음/반음 계단)
-  const [demo2WithSharp, setDemo2WithSharp] = useState<boolean>(true);
-
   // Demo 3 State (장조 vs 단조 3도 비교)
   const [demo3ChordType, setDemo3ChordType] = useState<'major' | 'minor'>('major');
 
   const question = THEORY_QUESTIONS.find(q => q.id === selectedQuestionId) || THEORY_QUESTIONS[0];
-
-  const playDemo1Tonic = () => {
-    if (demo1Key === 'G') soundEngine.playNote('G4', 1.0, 0, 0.35);
-    else if (demo1Key === 'F') soundEngine.playNote('F4', 1.0, 0, 0.35);
-    else soundEngine.playNote('C4', 1.0, 0, 0.35);
-  };
 
   const playDemo2Scale = (withSharp: boolean) => {
     const notes = withSharp
@@ -61,111 +53,129 @@ export const TheorySecretLab: React.FC<TheorySecretLabProps> = ({ initialSubTab 
     <div className="space-y-6">
       {/* 1. Header with Teacher / Student Empathy & Subtab Switcher */}
       <div className="bg-white border-2 border-amber-300/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="p-3 bg-amber-500 text-white rounded-2xl shadow-xs shrink-0">
-              <Lightbulb className="w-6 h-6" />
+        {/* Title & Badge Row */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black text-xl shadow-xs shrink-0">
+              💡
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-jua">
-                💡 "선생님, 이게 왜 이래요?" 음계와 화음 비밀 해결소
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-black bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-md border border-amber-200">
+                  음악 호기심 해결소 & 탐구 게임
+                </span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-jua tracking-tight mt-0.5">
+                “선생님, 이게 왜 이래요?” 음계와 화음 비밀 해결소
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed font-medium">
-                음이름과 계이름의 차이, 샵과 플랫의 비밀, 화음과 소리의 어울림을 풀고 <strong>오선지 음표 맞추기 게임</strong>도 즐겨보세요!
-              </p>
             </div>
           </div>
+        </div>
 
-          {/* Subtab Segmented Switcher */}
-          <div className="flex items-center gap-1.5 bg-[#F8F9FA] p-1.5 rounded-2xl border border-slate-200 self-start sm:self-center shrink-0 flex-wrap">
+        {/* Section Description */}
+        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+          음이름과 계이름, 샵(#)과 플랫(b)의 원리부터 나란한 조 시각화, 장·단화음 소리 구별, 조표 보고 으뜸음 찾기, 오선지 게임까지 교과서 음악의 비밀을 신나게 풀어보세요!
+        </p>
+
+        {/* Subtab Segmented Switcher */}
+        <div className="pt-3 border-t border-slate-100">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
             <button
               type="button"
               onClick={() => setActiveSubTab('concepts')}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua ${
+              className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua border ${
                 activeSubTab === 'concepts'
-                  ? 'bg-amber-500 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                  : 'bg-[#F8F9FA] hover:bg-white text-slate-700 border-slate-200 hover:border-amber-300'
               }`}
             >
-              <Lightbulb className="w-4 h-4" />
-              <span>음계와 화음 비밀 도감</span>
+              <Lightbulb className="w-4 h-4 shrink-0" />
+              <span>음계·화음 비밀 도감</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveSubTab('relative-graph')}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua ${
+              className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua border ${
                 activeSubTab === 'relative-graph'
-                  ? 'bg-indigo-600 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                  ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
+                  : 'bg-[#F8F9FA] hover:bg-white text-slate-700 border-slate-200 hover:border-indigo-300'
               }`}
             >
-              <Compass className="w-4 h-4" />
-              <span>🌀 나란한 조와 으뜸음 이동</span>
+              <Compass className="w-4 h-4 shrink-0" />
+              <span>나란한 조 & 으뜸음 이동</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveSubTab('chord-mood')}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua ${
+              className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua border ${
                 activeSubTab === 'chord-mood'
-                  ? 'bg-amber-600 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                  ? 'bg-amber-600 text-white border-amber-700 shadow-xs'
+                  : 'bg-[#F8F9FA] hover:bg-white text-slate-700 border-slate-200 hover:border-amber-300'
               }`}
             >
-              <Volume2 className="w-4 h-4" />
-              <span>👂 밝은 화음 vs 쓸쓸한 화음 맞추기</span>
+              <Volume2 className="w-4 h-4 shrink-0" />
+              <span>밝은 화음 vs 쓸쓸한 화음</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveSubTab('tonic-quiz')}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua ${
+              className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua border ${
                 activeSubTab === 'tonic-quiz'
-                  ? 'bg-orange-600 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                  ? 'bg-orange-600 text-white border-orange-700 shadow-xs'
+                  : 'bg-[#F8F9FA] hover:bg-white text-slate-700 border-slate-200 hover:border-orange-300'
               }`}
             >
-              <Music className="w-4 h-4" />
-              <span>🎹 조표 보고 으뜸음 건반 찾기</span>
+              <Music className="w-4 h-4 shrink-0" />
+              <span>조표 보고 으뜸음 찾기</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveSubTab('game')}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua ${
+              className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer font-jua border col-span-2 sm:col-span-1 ${
                 activeSubTab === 'game'
-                  ? 'bg-purple-600 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                  ? 'bg-purple-600 text-white border-purple-700 shadow-xs'
+                  : 'bg-[#F8F9FA] hover:bg-white text-slate-700 border-slate-200 hover:border-purple-300'
               }`}
             >
-              <Trophy className="w-4 h-4" />
-              <span>🎯 오선지 음표 맞추기 (C·G·D)</span>
+              <Trophy className="w-4 h-4 shrink-0" />
+              <span>오선지 음표 맞추기</span>
             </button>
           </div>
         </div>
 
-        {/* Question Selector Tabs (3x2 그리드) */}
+        {/* Question Selector Tabs */}
         {activeSubTab === 'concepts' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-2 border-t border-amber-100">
-            {THEORY_QUESTIONS.map(q => {
-              const isSelected = q.id === selectedQuestionId;
-              return (
-                <button
-                  key={q.id}
-                  type="button"
-                  onClick={() => setSelectedQuestionId(q.id)}
-                  className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-amber-50 border-amber-500 shadow-2xs text-slate-900 translate-y-[-2px]'
-                      : 'bg-[#F8F9FA] border-slate-200 hover:bg-white text-slate-700'
-                  }`}
-                >
-                  <span className="text-[10px] font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
-                    {q.category}
-                  </span>
-                  <h3 className="font-black text-xs sm:text-sm text-slate-900 mt-1.5 line-clamp-2 font-jua">
-                    {q.question}
-                  </h3>
-                </button>
-              );
-            })}
+          <div className="space-y-2.5 pt-3.5 border-t border-amber-100">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span className="text-xs font-black text-amber-950 font-jua">
+                궁금한 질문을 선택해보세요 (교과서 핵심 질문 6가지)
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {THEORY_QUESTIONS.map(q => {
+                const isSelected = q.id === selectedQuestionId;
+                return (
+                  <button
+                    key={q.id}
+                    type="button"
+                    onClick={() => setSelectedQuestionId(q.id)}
+                    className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-50 border-amber-500 shadow-2xs text-slate-900 translate-y-[-2px]'
+                        : 'bg-[#F8F9FA] border-slate-200 hover:bg-white text-slate-700'
+                    }`}
+                  >
+                    <span className="text-[10px] font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
+                      {q.category}
+                    </span>
+                    <h3 className="font-black text-xs sm:text-sm text-slate-900 mt-1.5 line-clamp-2 font-jua">
+                      {q.question}
+                    </h3>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -212,7 +222,6 @@ export const TheorySecretLab: React.FC<TheorySecretLabProps> = ({ initialSubTab 
                   </p>
                 </div>
 
-                {/* Lens Mode Toggle */}
                 <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 text-xs">
                   <button
                     type="button"
@@ -354,7 +363,6 @@ export const TheorySecretLab: React.FC<TheorySecretLabProps> = ({ initialSubTab 
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Bad Sound Card */}
                 <div className="bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 flex flex-col justify-between space-y-3">
                   <div>
                     <span className="text-xs font-black text-rose-900 bg-rose-100 px-2.5 py-0.5 rounded-full border border-rose-200">
@@ -375,7 +383,6 @@ export const TheorySecretLab: React.FC<TheorySecretLabProps> = ({ initialSubTab 
                   </button>
                 </div>
 
-                {/* Good Sound Card */}
                 <div className="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 flex flex-col justify-between space-y-3">
                   <div>
                     <span className="text-xs font-black text-emerald-900 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">

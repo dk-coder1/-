@@ -4,43 +4,37 @@ import { soundEngine } from '../utils/audioEngine';
 import {
   Sparkles,
   Play,
-  RotateCcw,
   Volume2,
   Compass,
-  ArrowRight,
   Sun,
   Moon,
-  Info,
-  CheckCircle2
+  Info
 } from 'lucide-react';
 
 export interface RelativeKeyPair {
   id: string;
-  majorName: string; // "바장조 (F Major)"
-  majorShort: string; // "바장조"
-  majorTonicNote: string; // "F4"
-  majorTonicPitch: string; // "F"
-  majorTonicKorean: string; // "바"
+  majorName: string;
+  majorShort: string;
+  majorTonicNote: string;
+  majorTonicPitch: string;
+  majorTonicKorean: string;
   
-  minorName: string; // "라단조 (D minor)"
-  minorShort: string; // "라단조"
-  minorTonicNote: string; // "D4"
-  minorTonicPitch: string; // "D"
-  minorTonicKorean: string; // "라"
+  minorName: string;
+  minorShort: string;
+  minorTonicNote: string;
+  minorTonicPitch: string;
+  minorTonicKorean: string;
   
-  keySignatureDesc: string; // "플랫(b) 1개 (시b)"
+  keySignatureDesc: string;
   keySignatureType: 'none' | 'sharp' | 'flat';
-  accidentals: string[]; // ["Bb"]
+  accidentals: string[];
   
-  textbookBadge: string; // "교과서 50쪽 <별 보며 달 보며>"
+  textbookBadge: string;
   
-  // Chromatic semitone steps for the tonic shift (e.g. F4 -> E4 -> Eb4 -> D4)
   shiftSteps: { note: string; pitch: string; semitoneOffset: number; label: string }[];
   
-  // Scale notes in Major order (degree 1 to 7)
   majorScale: { degree: number; solfege: string; pitch: string; korean: string; note: string }[];
   
-  // Scale notes in relative Minor order (degree 1 to 7 starting on '라')
   minorScale: { degree: number; solfege: string; pitch: string; korean: string; note: string }[];
 }
 
@@ -229,7 +223,6 @@ export const RelativeScaleGraph: React.FC = () => {
 
   const pair = RELATIVE_KEY_PAIRS.find(p => p.id === selectedPairId) || RELATIVE_KEY_PAIRS[0];
 
-  // Sound playback helpers
   const playScaleAudio = (mode: 'major' | 'minor') => {
     const scale = mode === 'major' ? pair.majorScale : pair.minorScale;
     scale.forEach((s, idx) => {
@@ -244,72 +237,60 @@ export const RelativeScaleGraph: React.FC = () => {
   };
 
   const playChordComparison = () => {
-    // 1. Play Major Triad
     const mChord = [pair.majorScale[0].note, pair.majorScale[2].note, pair.majorScale[4].note];
     soundEngine.playChord(mChord, 1.5, 0.03, 0.3);
 
-    // 2. Play Minor Triad 2.0s later
     setTimeout(() => {
       const minChord = [pair.minorScale[0].note, pair.minorScale[2].note, pair.minorScale[4].note];
       soundEngine.playChord(minChord, 1.8, 0.03, 0.3);
     }, 1800);
   };
 
-  // Animate the Tonic Shift sequence
   const triggerTonicShiftAnimation = useCallback(() => {
     setIsTransitioning(true);
     setCurrentStep(1);
 
-    // Step 1: Major Tonic sound
     soundEngine.playNote(pair.shiftSteps[0].note, 0.8, 0, 0.35);
 
-    // Step 2: Shift descending semitones sound
     setTimeout(() => {
       setCurrentStep(2);
       soundEngine.playNote(pair.shiftSteps[1].note, 0.5, 0, 0.28);
       setTimeout(() => soundEngine.playNote(pair.shiftSteps[2].note, 0.5, 0, 0.28), 350);
     }, 700);
 
-    // Step 3: Land on Minor Tonic
     setTimeout(() => {
       setCurrentStep(3);
       soundEngine.playNote(pair.shiftSteps[3].note, 1.2, 0, 0.38);
       setActiveMode('minor');
     }, 1500);
 
-    // Step 4: Reorganize and finish
     setTimeout(() => {
       setCurrentStep(4);
       setIsTransitioning(false);
     }, 2400);
   }, [pair]);
 
-  // D3 Rendering Hook
   useEffect(() => {
     if (!svgRef.current) return;
 
     const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove(); // Clear previous render
+    svg.selectAll('*').remove();
 
     const width = 800;
     const height = 440;
 
-    // Define gradients and shadow filters
     const defs = svg.append('defs');
 
-    // Sun Gradient
     const sunGrad = defs.append('linearGradient').attr('id', 'sun-grad')
       .attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
     sunGrad.append('stop').attr('offset', '0%').attr('stop-color', '#FBBF24');
     sunGrad.append('stop').attr('offset', '100%').attr('stop-color', '#F59E0B');
 
-    // Moon Gradient
     const moonGrad = defs.append('linearGradient').attr('id', 'moon-grad')
       .attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
     moonGrad.append('stop').attr('offset', '0%').attr('stop-color', '#818CF8');
     moonGrad.append('stop').attr('offset', '100%').attr('stop-color', '#4F46E5');
 
-    // Arrow marker
     defs.append('marker')
       .attr('id', 'shift-arrow')
       .attr('viewBox', '0 0 10 10')
@@ -323,12 +304,8 @@ export const RelativeScaleGraph: React.FC = () => {
       .attr('fill', '#EF4444');
 
     if (activeView === 'shift-ladder') {
-      // -------------------------------------------------------------
-      // VIEW A: Interactive Tonic Shift Ladder & Scale Nodes Diagram
-      // -------------------------------------------------------------
       const container = svg.append('g').attr('transform', 'translate(0, 0)');
 
-      // Top Title Bar in SVG
       container.append('text')
         .attr('x', width / 2)
         .attr('y', 36)
@@ -348,10 +325,8 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('fill', '#64748B')
         .text(`동일한 조표: ${pair.keySignatureDesc} | 같은 음 7개를 공유하지만 으뜸음이 '도'에서 '라'로 3반음(단3도) 이동합니다.`);
 
-      // 1. Tonic Shift Stage (Center Top)
       const shiftGroup = container.append('g').attr('transform', 'translate(100, 95)');
 
-      // Background Card
       shiftGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
@@ -362,7 +337,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('stroke', '#FDE68A')
         .attr('stroke-width', 2);
 
-      // Section Subtitle
       shiftGroup.append('text')
         .attr('x', 30)
         .attr('y', 30)
@@ -371,12 +345,10 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('fill', '#92400E')
         .text('📍 으뜸음 이동 경로: 장조 "도"에서 3반음(단3도) 아래로 쏙!');
 
-      // Step coordinates
       const stepXScale = d3.scalePoint()
         .domain(pair.shiftSteps.map(s => s.pitch))
         .range([80, 520]);
 
-      // Draw connecting track line
       shiftGroup.append('line')
         .attr('x1', 80)
         .attr('y1', 75)
@@ -386,7 +358,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('stroke-width', 6)
         .attr('stroke-linecap', 'round');
 
-      // Animated Arc of the Tonic Shift
       const xStart = 80;
       const xEnd = 520;
       const yPos = 75;
@@ -400,7 +371,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('stroke-dasharray', '6 4')
         .attr('marker-end', 'url(#shift-arrow)');
 
-      // Animate the arc if transitioning
       if (isTransitioning) {
         const totalLength = (arc.node() as SVGPathElement)?.getTotalLength?.() || 400;
         arc
@@ -412,7 +382,6 @@ export const RelativeScaleGraph: React.FC = () => {
           .attr('stroke-dashoffset', 0);
       }
 
-      // Shift Badge in the middle of Arc
       shiftGroup.append('rect')
         .attr('x', 240)
         .attr('y', 30)
@@ -432,7 +401,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('fill', '#991B1B')
         .text('▼ -3 반음 (단3도)');
 
-      // Render the 4 Semitone Step Circles
       pair.shiftSteps.forEach((step, idx) => {
         const cx = stepXScale(step.pitch) || 80;
         const cy = 75;
@@ -447,7 +415,6 @@ export const RelativeScaleGraph: React.FC = () => {
           });
 
         if (isStart) {
-          // Major Sun Node
           nodeGroup.append('circle')
             .attr('r', 24)
             .attr('fill', 'url(#sun-grad)')
@@ -471,7 +438,6 @@ export const RelativeScaleGraph: React.FC = () => {
             .attr('fill', '#FFFBEB')
             .text(`${pair.majorTonicKorean}(${pair.majorTonicPitch})`);
         } else if (isEnd) {
-          // Minor Moon Node
           nodeGroup.append('circle')
             .attr('r', 24)
             .attr('fill', 'url(#moon-grad)')
@@ -495,7 +461,6 @@ export const RelativeScaleGraph: React.FC = () => {
             .attr('fill', '#EEF2FF')
             .text(`${pair.minorTonicKorean}(${pair.minorTonicPitch})`);
         } else {
-          // Intermediate half-step node
           nodeGroup.append('circle')
             .attr('r', 13)
             .attr('fill', '#FFFFFF')
@@ -511,7 +476,6 @@ export const RelativeScaleGraph: React.FC = () => {
             .text(step.pitch);
         }
 
-        // Label below
         shiftGroup.append('text')
           .attr('x', cx)
           .attr('y', cy + 38)
@@ -522,10 +486,8 @@ export const RelativeScaleGraph: React.FC = () => {
           .text(step.label);
       });
 
-      // 2. Active Scale Reorganization Diagram (Center Bottom)
       const scaleGroup = container.append('g').attr('transform', 'translate(50, 260)');
 
-      // Background Card
       scaleGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
@@ -536,7 +498,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('stroke', activeMode === 'major' ? '#FDE047' : '#C7D2FE')
         .attr('stroke-width', 2);
 
-      // Mode Header
       scaleGroup.append('text')
         .attr('x', 30)
         .attr('y', 32)
@@ -566,7 +527,6 @@ export const RelativeScaleGraph: React.FC = () => {
             soundEngine.playNote(n.note, 0.8, 0, 0.35);
           });
 
-        // Circle
         node.append('circle')
           .attr('r', isTonic ? 25 : 20)
           .attr('fill', isTonic
@@ -580,7 +540,6 @@ export const RelativeScaleGraph: React.FC = () => {
           .attr('stroke-width', isTonic ? 3 : 2)
           .attr('filter', isTonic ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' : 'none');
 
-        // Solfege Text
         node.append('text')
           .attr('y', -3)
           .attr('text-anchor', 'middle')
@@ -589,7 +548,6 @@ export const RelativeScaleGraph: React.FC = () => {
           .attr('fill', isTonic ? '#FFFFFF' : '#0F172A')
           .text(n.solfege);
 
-        // Degree Number
         node.append('text')
           .attr('y', 13)
           .attr('text-anchor', 'middle')
@@ -598,7 +556,6 @@ export const RelativeScaleGraph: React.FC = () => {
           .attr('fill', isTonic ? '#FEF3C7' : '#64748B')
           .text(`${n.degree}음`);
 
-        // Korean and Pitch Name Below
         scaleGroup.append('text')
           .attr('x', nx)
           .attr('y', ny + 40)
@@ -612,9 +569,6 @@ export const RelativeScaleGraph: React.FC = () => {
           .text(`${n.korean}(${n.pitch})`);
       });
     } else {
-      // -------------------------------------------------------------
-      // VIEW B: Dual-Ring Concentric Circle of Fifths Orbit
-      // -------------------------------------------------------------
       const centerX = width / 2;
       const centerY = height / 2 + 10;
       const rOuter = 150;
@@ -622,7 +576,6 @@ export const RelativeScaleGraph: React.FC = () => {
 
       const orbitGroup = svg.append('g').attr('transform', `translate(${centerX}, ${centerY})`);
 
-      // Title
       svg.append('text')
         .attr('x', centerX)
         .attr('y', 36)
@@ -641,7 +594,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('fill', '#64748B')
         .text('바깥쪽 원은 장조(☀️), 안쪽 원은 나란한 단조(🌙)예요! 마주보는 짝꿍끼리 같은 조표를 씁니다.');
 
-      // Concentric background circles
       orbitGroup.append('circle')
         .attr('r', rOuter)
         .attr('fill', 'none')
@@ -656,7 +608,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('stroke-width', 4)
         .attr('stroke-dasharray', '4 4');
 
-      // Center Core
       orbitGroup.append('circle')
         .attr('r', 44)
         .attr('fill', '#FFFFFF')
@@ -679,7 +630,6 @@ export const RelativeScaleGraph: React.FC = () => {
         .attr('fill', '#64748B')
         .text('나란한 조');
 
-      // Draw the 4 core pairs around the circle
       RELATIVE_KEY_PAIRS.forEach((kPair, idx) => {
         const angle = (idx * (2 * Math.PI) / RELATIVE_KEY_PAIRS.length) - (Math.PI / 2);
         const xOut = rOuter * Math.cos(angle);
@@ -689,7 +639,6 @@ export const RelativeScaleGraph: React.FC = () => {
 
         const isSelected = kPair.id === selectedPairId;
 
-        // Connecting Ray
         orbitGroup.append('line')
           .attr('x1', xIn)
           .attr('y1', yIn)
@@ -699,7 +648,6 @@ export const RelativeScaleGraph: React.FC = () => {
           .attr('stroke-width', isSelected ? 3 : 1.5)
           .attr('stroke-dasharray', isSelected ? 'none' : '2 2');
 
-        // Outer Major Node
         const outerG = orbitGroup.append('g')
           .attr('transform', `translate(${xOut}, ${yOut})`)
           .style('cursor', 'pointer')
@@ -723,7 +671,6 @@ export const RelativeScaleGraph: React.FC = () => {
           .attr('fill', isSelected ? '#FFFFFF' : '#92400E')
           .text(kPair.majorShort);
 
-        // Inner Minor Node
         const innerG = orbitGroup.append('g')
           .attr('transform', `translate(${xIn}, ${yIn})`)
           .style('cursor', 'pointer')
@@ -837,6 +784,11 @@ export const RelativeScaleGraph: React.FC = () => {
             <span className="text-xs text-slate-600 font-bold">
               조표: <strong className="text-slate-900">{pair.keySignatureDesc}</strong>
             </span>
+            {isTransitioning && (
+              <span className="text-xs bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-md animate-pulse">
+                이동 단계: {currentStep}/4
+              </span>
+            )}
           </div>
 
           {/* Action Trigger Buttons */}

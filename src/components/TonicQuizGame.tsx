@@ -3,11 +3,8 @@ import { soundEngine } from '../utils/audioEngine';
 import {
   Trophy,
   Sparkles,
-  Volume2,
   RotateCcw,
-  CheckCircle2,
   XCircle,
-  HelpCircle,
   Lightbulb,
   Award,
   Flame,
@@ -23,32 +20,31 @@ export type KeyLabelType = 'korean' | 'english' | 'solfege' | 'hidden';
 
 export interface KeySignatureQuestion {
   id: string;
-  name: string; // "사장조 (G Major)"
-  shortName: string; // "사장조"
+  name: string;
+  shortName: string;
   mode: 'major' | 'minor';
-  tonicPitchNames: string[]; // ["G"] or ["A#", "Bb"]
-  tonicKoreanName: string; // "사"
-  tonicEngName: string; // "G"
-  tonicSolfege: string; // "도" (장조) or "라" (단조)
+  tonicPitchNames: string[];
+  tonicKoreanName: string;
+  tonicEngName: string;
+  tonicSolfege: string;
   sharpsCount: number;
   flatsCount: number;
   accidentals: Array<{
     type: '#' | 'b';
     x: number;
-    y: number; // SVG y-coordinate on staff
+    y: number;
     noteLabel: string;
   }>;
   explanation: string;
   mnemonicRule: string;
   isTextbookKey: boolean;
   textbookBadge?: string;
-  celebrationChord: string[]; // for arpeggio / chord feedback
+  celebrationChord: string[];
 }
 
-// 2-Octave Virtual Keyboard Key Definitions (C3 to D5)
 interface PianoKey {
-  pitch: string; // e.g. "C4"
-  basePitchName: string; // e.g. "C"
+  pitch: string;
+  basePitchName: string;
   octave: number;
   isBlack: boolean;
   koreanName: string;
@@ -88,17 +84,6 @@ const PIANO_KEYS: PianoKey[] = [
   { pitch: 'D5', basePitchName: 'D', octave: 5, isBlack: false, koreanName: '라', engName: 'D', keyboardKey: 'l' },
 ];
 
-// Rich Database of Key Signatures and their Tonic Notes
-// Staff line coordinates:
-// Line 5 (F5) = 74
-// Line 4 (D5) = 88
-// Line 3 (B4) = 102
-// Line 2 (G4) = 116
-// Line 1 (E4) = 130
-// Space 4 (E5) = 81
-// Space 3 (C5) = 95
-// Space 2 (A4) = 109
-// Space 1 (F4) = 123
 const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
   // 1. 다장조 (C Major) - 0 sharps, 0 flats
   {
@@ -133,7 +118,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     sharpsCount: 1,
     flatsCount: 0,
     accidentals: [
-      { type: '#', x: 88, y: 79, noteLabel: '파#' } // Line 5 F5
+      { type: '#', x: 88, y: 79, noteLabel: '파#' }
     ],
     explanation: '조표에 #이 1개(파#) 붙어 있어요! 샵(#)의 마법 공식: "마지막 샵의 바로 윗음이 도!" 따라서 파# 바로 위인 솔(사, G)이 으뜸음 도가 됩니다.',
     mnemonicRule: '샵(#) 1개(파#) ➔ 바로 윗음인 "솔(사, G)"이 으뜸음(도)!',
@@ -155,7 +140,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     sharpsCount: 0,
     flatsCount: 1,
     accidentals: [
-      { type: 'b', x: 88, y: 104, noteLabel: '시b' } // Line 3 B4
+      { type: 'b', x: 88, y: 104, noteLabel: '시b' }
     ],
     explanation: '조표에 b이 1개(시b) 붙어 있어요! 플랫이 1개일 땐 시b에서 4도 아래인 파(바, F)가 으뜸음 도가 됩니다.',
     mnemonicRule: '플랫(b) 1개(시b) ➔ 4도 아래인 "파(바, F)"가 으뜸음(도)!',
@@ -178,7 +163,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     flatsCount: 0,
     accidentals: [
       { type: '#', x: 88, y: 79, noteLabel: '파#' },
-      { type: '#', x: 104, y: 99, noteLabel: '도#' } // Space 3 C5
+      { type: '#', x: 104, y: 99, noteLabel: '도#' }
     ],
     explanation: '조표에 #이 2개(파#, 도#) 붙어 있어요! 마지막 샵인 "도#"의 바로 윗음(반음 위)은 "레(라, D)"입니다. 따라서 레(라, D)가 으뜸음 도가 됩니다!',
     mnemonicRule: '마지막 샵인 "도#"의 바로 윗음 ➔ "레(라, D)"가 으뜸음(도)!',
@@ -187,7 +172,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     celebrationChord: ['D4', 'F#4', 'A4', 'D5']
   },
 
-  // 5. 라단조 (D minor) - 1 flat (Bb) - 나란한 단조!
+  // 5. 라단조 (D minor) - 1 flat (Bb)
   {
     id: 'd-minor-tonic',
     name: '라단조 (D minor)',
@@ -209,7 +194,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     celebrationChord: ['D4', 'F4', 'A4', 'D5']
   },
 
-  // 6. 가단조 (A minor) - 0 sharps, 0 flats - 다장조의 나란한 단조!
+  // 6. 가단조 (A minor) - 0 sharps, 0 flats
   {
     id: 'a-minor-tonic',
     name: '가단조 (A minor)',
@@ -243,7 +228,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     flatsCount: 2,
     accidentals: [
       { type: 'b', x: 88, y: 104, noteLabel: '시b' },
-      { type: 'b', x: 104, y: 86, noteLabel: '미b' } // Space 4 E5
+      { type: 'b', x: 104, y: 86, noteLabel: '미b' }
     ],
     explanation: '플랫(b)이 2개 이상 붙었을 때의 마법: "끝에서 두 번째 플랫이 바로 으뜸음 도!" 따라서 끝에서 두 번째인 "시b(내림나, Bb)" 건반이 으뜸음이 됩니다.',
     mnemonicRule: '플랫이 2개(시b, 미b) ➔ 끝에서 두 번째인 "시b(내림나, Bb)"이 으뜸음(도)!',
@@ -267,7 +252,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     accidentals: [
       { type: '#', x: 88, y: 79, noteLabel: '파#' },
       { type: '#', x: 102, y: 99, noteLabel: '도#' },
-      { type: '#', x: 116, y: 65, noteLabel: '솔#' } // Above Line 5 G5
+      { type: '#', x: 116, y: 65, noteLabel: '솔#' }
     ],
     explanation: '조표에 #이 3개(파#, 도#, 솔#) 있어요! 마지막 샵인 "솔#"의 바로 윗음(반음 위)은 "라(가, A)"입니다!',
     mnemonicRule: '마지막 샵인 "솔#"의 바로 윗음 ➔ "라(가, A)"가 으뜸음(도)!',
@@ -291,7 +276,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     accidentals: [
       { type: 'b', x: 88, y: 104, noteLabel: '시b' },
       { type: 'b', x: 104, y: 86, noteLabel: '미b' },
-      { type: 'b', x: 120, y: 112, noteLabel: '라b' } // Space 2 A4
+      { type: 'b', x: 120, y: 112, noteLabel: '라b' }
     ],
     explanation: '플랫(b)이 3개(시b, 미b, 라b) 붙었어요! 끝에서 두 번째 플랫인 "미b(내림마, Eb)" 검은건반이 으뜸음 도가 됩니다!',
     mnemonicRule: '끝에서 두 번째 플랫 ➔ "미b(내림마, Eb)"이 으뜸음(도)!',
@@ -300,7 +285,7 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
     celebrationChord: ['D#4', 'G4', 'A#4', 'D#5']
   },
 
-  // 10. 마단조 (E minor) - 1 sharp (F#) - 사장조의 나란한 단조!
+  // 10. 마단조 (E minor) - 1 sharp (F#)
   {
     id: 'e-minor-tonic',
     name: '마단조 (E minor)',
@@ -324,12 +309,10 @@ const KEY_SIGNATURE_QUESTIONS: KeySignatureQuestion[] = [
 ];
 
 export const TonicQuizGame: React.FC = () => {
-  // Game Setup & Filter
   const [filterMode, setFilterMode] = useState<TonicQuizFilter>('textbook');
   const [keyLabel, setKeyLabel] = useState<KeyLabelType>('korean');
   const [showHint, setShowHint] = useState<boolean>(false);
 
-  // Filter questions based on selected mode
   const filteredQuestions = useMemo(() => {
     switch (filterMode) {
       case 'textbook':
@@ -344,23 +327,19 @@ export const TonicQuizGame: React.FC = () => {
     }
   }, [filterMode]);
 
-  // Current Question State
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [roundNumber, setRoundNumber] = useState<number>(1);
   const totalRounds = 8;
 
-  // Answer & Feedback State
   const [selectedKeyPitch, setSelectedKeyPitch] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [lastClickedNote, setLastClickedNote] = useState<PianoKey | null>(null);
   const [isRoundFinished, setIsRoundFinished] = useState<boolean>(false);
 
-  // Score & Streak
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
   const [bestStreak, setBestStreak] = useState<number>(0);
 
-  // Pick a random question that isn't the same as current
   const pickNextRandomQuestion = useCallback(() => {
     if (filteredQuestions.length === 0) return;
     let nextIdx = Math.floor(Math.random() * filteredQuestions.length);
@@ -374,7 +353,6 @@ export const TonicQuizGame: React.FC = () => {
     setShowHint(false);
   }, [filteredQuestions, currentQuestionIndex]);
 
-  // Handle filter mode change
   const handleFilterChange = (mode: TonicQuizFilter) => {
     setFilterMode(mode);
     setScore(0);
@@ -385,7 +363,6 @@ export const TonicQuizGame: React.FC = () => {
     setSelectedKeyPitch(null);
     setLastClickedNote(null);
     setShowHint(false);
-    // Pick random question in new filter
     const newQuestions = mode === 'textbook'
       ? KEY_SIGNATURE_QUESTIONS.filter(q => q.isTextbookKey)
       : mode === 'major'
@@ -400,22 +377,17 @@ export const TonicQuizGame: React.FC = () => {
   const currentQuestion: KeySignatureQuestion =
     filteredQuestions[currentQuestionIndex] || filteredQuestions[0] || KEY_SIGNATURE_QUESTIONS[0];
 
-  // Play celebration chord when correct
   const playSuccessEffect = useCallback((question: KeySignatureQuestion) => {
     soundEngine.playChord(question.celebrationChord, 1.8, 0.04, 0.35);
   }, []);
 
-  // Handle student clicking a key on the virtual keyboard
-  const handleKeyClick = (key: PianoKey) => {
+  const handleKeyClick = useCallback((key: PianoKey) => {
     if (isRoundFinished) return;
 
-    // 1. Play sound of the pressed key immediately
     soundEngine.playNote(key.pitch, 0.9, 0, 0.35);
     setLastClickedNote(key);
     setSelectedKeyPitch(key.pitch);
 
-    // 2. Check if this key matches the tonic pitch
-    // Matches if basePitchName is in tonicPitchNames or engName is in tonicPitchNames
     const isMatch =
       currentQuestion.tonicPitchNames.includes(key.basePitchName) ||
       currentQuestion.tonicPitchNames.includes(key.engName);
@@ -434,19 +406,17 @@ export const TonicQuizGame: React.FC = () => {
       setIsCorrect(false);
       setStreak(0);
     }
-  };
+  }, [isRoundFinished, currentQuestion, playSuccessEffect, streak, bestStreak]);
 
-  // Move to next question or complete game
-  const handleNextQuestion = () => {
+  const handleNextQuestion = useCallback(() => {
     if (roundNumber >= totalRounds) {
       setIsRoundFinished(true);
     } else {
       setRoundNumber(prev => prev + 1);
       pickNextRandomQuestion();
     }
-  };
+  }, [roundNumber, totalRounds, pickNextRandomQuestion]);
 
-  // Restart the whole game round
   const handleRestart = () => {
     setRoundNumber(1);
     setScore(0);
@@ -455,10 +425,8 @@ export const TonicQuizGame: React.FC = () => {
     pickNextRandomQuestion();
   };
 
-  // Keyboard shortcut listener for keyboard playing
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // If user is focused on an input, ignore
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
       if (e.key === 'Enter' && isCorrect) {
@@ -476,13 +444,11 @@ export const TonicQuizGame: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isCorrect, handleNextQuestion, handleKeyClick]);
 
-  // Determine key label display
   const getKeyLabel = (key: PianoKey): string => {
     if (keyLabel === 'hidden') return '';
     if (keyLabel === 'korean') return key.koreanName;
     if (keyLabel === 'english') return key.engName;
     if (keyLabel === 'solfege') {
-      // Show hint solfege if it's the tonic or default scale relative
       if (currentQuestion.tonicPitchNames.includes(key.basePitchName) || currentQuestion.tonicPitchNames.includes(key.engName)) {
         return currentQuestion.tonicSolfege;
       }
@@ -535,7 +501,6 @@ export const TonicQuizGame: React.FC = () => {
 
         {/* Filter Tabs & Label Mode Options */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-3 border-t border-amber-100 text-xs">
-          {/* Question Category Filter */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="font-extrabold text-slate-700 font-jua">문제 범위:</span>
             <div className="flex items-center gap-1 bg-[#F8F9FA] p-1 rounded-xl border border-slate-200">
@@ -586,7 +551,6 @@ export const TonicQuizGame: React.FC = () => {
             </div>
           </div>
 
-          {/* Virtual Keyboard Labels Toggle */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="font-extrabold text-slate-700 font-jua">건반 라벨:</span>
             <div className="flex items-center gap-1 bg-[#F8F9FA] p-1 rounded-xl border border-slate-200">
@@ -627,7 +591,6 @@ export const TonicQuizGame: React.FC = () => {
         <div className="space-y-6">
           {/* 2. Question Prompt & Music Staff Card */}
           <div className="bg-white rounded-3xl border-2 border-slate-300 p-6 shadow-sm space-y-4">
-            {/* Top Question Info Bar */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <span className="font-black text-slate-900 text-sm font-jua">
@@ -647,7 +610,6 @@ export const TonicQuizGame: React.FC = () => {
                 )}
               </div>
 
-              {/* Shuffle button to skip / pick another */}
               <button
                 type="button"
                 onClick={pickNextRandomQuestion}
@@ -659,7 +621,6 @@ export const TonicQuizGame: React.FC = () => {
               </button>
             </div>
 
-            {/* Main Question Text */}
             <div className="text-center py-1">
               <h4 className="text-lg sm:text-2xl font-black text-slate-900 font-jua leading-snug">
                 오선지의 조표를 보고{' '}
@@ -681,7 +642,6 @@ export const TonicQuizGame: React.FC = () => {
                 viewBox="0 0 460 170"
                 className="w-full max-w-[500px] h-40 select-none"
               >
-                {/* 5 Staff Lines */}
                 {[74, 88, 102, 116, 130].map((y, idx) => (
                   <line
                     key={idx}
@@ -694,11 +654,9 @@ export const TonicQuizGame: React.FC = () => {
                   />
                 ))}
 
-                {/* Left & Right End Bar Lines */}
                 <line x1="25" y1="74" x2="25" y2="130" stroke="#1E293B" strokeWidth="3" />
                 <line x1="435" y1="74" x2="435" y2="130" stroke="#1E293B" strokeWidth="3" />
 
-                {/* Treble Clef (높은음자리표) */}
                 <text
                   x="35"
                   y="126"
@@ -710,7 +668,6 @@ export const TonicQuizGame: React.FC = () => {
                   𝄞
                 </text>
 
-                {/* Key Signature Accidentals (조표 위치) */}
                 {currentQuestion.accidentals.map((acc, idx) => (
                   <g key={idx}>
                     <text
@@ -724,7 +681,6 @@ export const TonicQuizGame: React.FC = () => {
                     >
                       {acc.type === '#' ? '♯' : '♭'}
                     </text>
-                    {/* Small helper label under accidental if hint is open */}
                     {showHint && (
                       <text
                         x={acc.x + (acc.type === '#' ? 2 : 1)}
@@ -740,7 +696,6 @@ export const TonicQuizGame: React.FC = () => {
                   </g>
                 ))}
 
-                {/* When No Sharps and No Flats (다장조 / 가단조) */}
                 {currentQuestion.sharpsCount === 0 && currentQuestion.flatsCount === 0 && (
                   <g>
                     <rect x="95" y="80" width="130" height="42" rx="10" fill="#FEF3C7" stroke="#F59E0B" strokeWidth="1.5" />
@@ -750,7 +705,6 @@ export const TonicQuizGame: React.FC = () => {
                   </g>
                 )}
 
-                {/* Question mark placeholder note in staff */}
                 <g transform="translate(300, 102)">
                   <circle cx="0" cy="0" r="18" fill={isCorrect ? '#10B981' : isCorrect === false ? '#EF4444' : '#F59E0B'} opacity="0.2" className="animate-pulse" />
                   <circle cx="0" cy="0" r="12" fill={isCorrect ? '#059669' : isCorrect === false ? '#DC2626' : '#D97706'} />
@@ -760,7 +714,6 @@ export const TonicQuizGame: React.FC = () => {
                 </g>
               </svg>
 
-              {/* Hint Toggle Button */}
               <div className="mt-2 flex items-center justify-between w-full max-w-[500px]">
                 <button
                   type="button"
@@ -778,7 +731,6 @@ export const TonicQuizGame: React.FC = () => {
                 </span>
               </div>
 
-              {/* Expanded Hint Box */}
               {showHint && (
                 <div className="w-full max-w-[500px] mt-3 p-3.5 bg-amber-50 rounded-2xl border-2 border-amber-300 text-xs text-amber-950 space-y-1.5 animate-fadeIn">
                   <div className="flex items-center gap-2 font-black font-jua text-sm text-amber-900">
@@ -795,7 +747,6 @@ export const TonicQuizGame: React.FC = () => {
               )}
             </div>
 
-            {/* Answer Feedback Banner */}
             {isCorrect === true && (
               <div className="p-4 sm:p-5 bg-emerald-50 rounded-2xl border-2 border-emerald-400 space-y-3 shadow-xs animate-fadeIn">
                 <div className="flex items-start justify-between gap-3">
@@ -877,10 +828,8 @@ export const TonicQuizGame: React.FC = () => {
               </span>
             </div>
 
-            {/* Virtual Piano Canvas */}
             <div className="relative pt-2 pb-4 overflow-x-auto select-none">
               <div className="min-w-[620px] max-w-[850px] mx-auto relative flex justify-center bg-[#2B231B] p-3 rounded-3xl shadow-xl border-4 border-[#3D3025]">
-                {/* White Keys Container */}
                 <div className="flex relative w-full h-44 sm:h-52">
                   {PIANO_KEYS.filter(k => !k.isBlack).map(key => {
                     const isTonic =
@@ -906,21 +855,18 @@ export const TonicQuizGame: React.FC = () => {
                           marginRight: '2px',
                         }}
                       >
-                        {/* Keyboard shortcut hint badge */}
                         {key.keyboardKey && (
                           <span className="absolute top-2 text-[10px] font-bold text-slate-400/80 bg-slate-100/80 px-1 rounded">
                             {key.keyboardKey}
                           </span>
                         )}
 
-                        {/* Crown/Star indicator when correct */}
                         {showSuccessHighlight && (
                           <div className="absolute top-8 p-1 bg-emerald-500 text-white rounded-full animate-bounce">
                             <Crown className="w-3.5 h-3.5" />
                           </div>
                         )}
 
-                        {/* Note Label */}
                         <div className="text-center font-bold">
                           <span className="text-xs sm:text-sm font-black block font-jua">
                             {getKeyLabel(key)}
@@ -936,17 +882,13 @@ export const TonicQuizGame: React.FC = () => {
                   })}
                 </div>
 
-                {/* Black Keys Container (Absolute Overlay) */}
+                {/* Black Keys Container */}
                 <div className="absolute top-3 left-3 right-3 h-28 sm:h-32 pointer-events-none flex w-[calc(100%-24px)]">
-                  {/* Black keys positioned at relative percentages */}
-                  {/* 15 white keys in total: C3 to D5 = 16 white keys */}
-                  {/* We map black keys to their slot */}
                   {renderBlackKeys(currentQuestion, selectedKeyPitch, isCorrect, handleKeyClick, keyLabel)}
                 </div>
               </div>
             </div>
 
-            {/* Instruction helper */}
             <div className="flex flex-wrap items-center justify-between text-xs text-slate-500 pt-1">
               <span>💡 으뜸음은 어느 옥타브의 건반을 눌러도 모두 정답으로 인정됩니다!</span>
               <div className="flex items-center gap-3">
@@ -976,7 +918,6 @@ export const TonicQuizGame: React.FC = () => {
             </p>
           </div>
 
-          {/* Score & Badge Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
             <div className="p-4 bg-amber-50 rounded-2xl border-2 border-amber-200">
               <div className="text-xs text-amber-800 font-bold">최종 점수</div>
@@ -994,7 +935,6 @@ export const TonicQuizGame: React.FC = () => {
             </div>
           </div>
 
-          {/* Action buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
             <button
               type="button"
@@ -1016,7 +956,7 @@ export const TonicQuizGame: React.FC = () => {
         </div>
       )}
 
-      {/* 5. Elementary Key Signature Cheat Sheet (초등 교과서 조표 꿀팁 치트시트) */}
+      {/* 5. Elementary Key Signature Cheat Sheet */}
       <div className="bg-[#FFFDF9] rounded-3xl border-2 border-amber-200 p-5 sm:p-6 space-y-4 shadow-2xs">
         <div className="flex items-center gap-2.5">
           <div className="p-2 bg-amber-500 text-white rounded-xl shrink-0">
@@ -1052,7 +992,7 @@ export const TonicQuizGame: React.FC = () => {
 
           <div className="p-3.5 bg-white rounded-2xl border-2 border-blue-200 space-y-1">
             <div className="flex items-center justify-between">
-              <strong className="text-blue-950 font-black text-sm font-jua">🌊 바장조 (F Major)</strong>
+              <strong className="text-blue-950 font-black text-sm font-jua">🌸 바장조 (F Major)</strong>
               <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 text-[10px] font-bold">b 1개 (시b)</span>
             </div>
             <p className="text-slate-700 font-medium">
@@ -1085,7 +1025,7 @@ export const TonicQuizGame: React.FC = () => {
 
           <div className="p-3.5 bg-white rounded-2xl border-2 border-rose-200 space-y-1">
             <div className="flex items-center justify-between">
-              <strong className="text-rose-950 font-black text-sm font-jua">✨ 가단조 (A minor)</strong>
+              <strong className="text-rose-950 font-black text-sm font-jua">🍂 가단조 (A minor)</strong>
               <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-900 text-[10px] font-bold">조표 없음</span>
             </div>
             <p className="text-slate-700 font-medium">
@@ -1099,7 +1039,6 @@ export const TonicQuizGame: React.FC = () => {
   );
 };
 
-// Helper function to render black keys with accurate alignment above white keys
 function renderBlackKeys(
   currentQuestion: KeySignatureQuestion,
   selectedKeyPitch: string | null,
@@ -1107,22 +1046,6 @@ function renderBlackKeys(
   handleKeyClick: (key: PianoKey) => void,
   keyLabel: KeyLabelType
 ) {
-  // Total white keys = 16 (C3, D3, E3, F3, G3, A3, B3, C4, D4, E4, F4, G4, A4, B4, C5, D5)
-  // Index of white keys:
-  // C3=0, D3=1, E3=2, F3=3, G3=4, A3=5, B3=6, C4=7, D4=8, E4=9, F4=10, G4=11, A4=12, B4=13, C5=14, D5=15
-  // Black keys sit between white keys:
-  // C#3 between 0 & 1 -> left offset = (1 / 16) * 100%
-  // D#3 between 1 & 2 -> left offset = (2 / 16) * 100%
-  // F#3 between 3 & 4 -> left offset = (4 / 16) * 100%
-  // G#3 between 4 & 5 -> left offset = (5 / 16) * 100%
-  // A#3 between 5 & 6 -> left offset = (6 / 16) * 100%
-  // C#4 between 7 & 8 -> left offset = (8 / 16) * 100%
-  // D#4 between 8 & 9 -> left offset = (9 / 16) * 100%
-  // F#4 between 10 & 11 -> left offset = (11 / 16) * 100%
-  // G#4 between 11 & 12 -> left offset = (12 / 16) * 100%
-  // A#4 between 12 & 13 -> left offset = (13 / 16) * 100%
-  // C#5 between 14 & 15 -> left offset = (15 / 16) * 100%
-
   const blackKeysMap: { pitch: string; betweenWhiteIndex: number }[] = [
     { pitch: 'C#3', betweenWhiteIndex: 1 },
     { pitch: 'D#3', betweenWhiteIndex: 2 },
@@ -1140,7 +1063,7 @@ function renderBlackKeys(
   ];
 
   const totalWhite = 16;
-  const blackKeyWidthPercent = 3.9; // % width of each black key
+  const blackKeyWidthPercent = 3.9;
 
   return blackKeysMap.map(({ pitch, betweenWhiteIndex }) => {
     const key = PIANO_KEYS.find(k => k.pitch === pitch);
@@ -1172,19 +1095,16 @@ function renderBlackKeys(
           width: `${blackKeyWidthPercent}%`,
         }}
       >
-        {/* Keyboard shortcut */}
         {key.keyboardKey && (
           <span className="text-[9px] text-slate-400 bg-black/50 px-0.5 rounded mb-1">
             {key.keyboardKey}
           </span>
         )}
 
-        {/* Crown indicator if correct */}
         {showSuccessHighlight && (
           <Crown className="w-3 h-3 text-amber-300 mb-1 animate-bounce" />
         )}
 
-        {/* Label */}
         {keyLabel !== 'hidden' && (
           <span className="text-[10px] font-black leading-none block text-center font-jua">
             {keyLabel === 'korean' ? key.koreanName : keyLabel === 'english' ? key.engName : isTonic ? currentQuestion.tonicSolfege : ''}
